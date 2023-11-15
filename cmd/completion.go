@@ -6,7 +6,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var CompletionCmd = &cobra.Command{
+var completionCmd = &cobra.Command{
 	Use:                   "completion (bash | zsh | fish | powershell)",
 	Short:                 "Outputs the completion script for the specified shell",
 	DisableFlagsInUseLine: true,

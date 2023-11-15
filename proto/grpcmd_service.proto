@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option go_package = "github.com/grpcmd/grpcmd/proto/pb";
+
+package grpcmd;
+
+service GrpcmdService {
+  rpc UnaryMethod (GrpcmdRequest) returns (GrpcmdResponse) {}
+  rpc ClientStreamingMethod (stream GrpcmdRequest) returns (GrpcmdResponse) {}
+  rpc ServerStreamingMethod (GrpcmdRequest) returns (stream GrpcmdResponse) {}
+  rpc BidirectionalStreamingMethod (stream GrpcmdRequest) returns (stream GrpcmdResponse) {}
+}
+
+message GrpcmdRequest {
+  string name = 1;
+}
+
+message GrpcmdResponse {
+  string message = 1;
+}

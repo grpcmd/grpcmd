@@ -44,6 +44,7 @@ var rootCmd = &cobra.Command{
 			err := grpcmd.Call(args[1], args[2])
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Error while calling method %s:\n\t%s\n", args[1], err)
+				os.Exit(1)
 			}
 		} else if len(args) > 3 {
 			var data strings.Builder
@@ -53,6 +54,7 @@ var rootCmd = &cobra.Command{
 			err := grpcmd.Call(args[1], data.String())
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Error while calling method %s:\n\t%s\n", args[1], err)
+				os.Exit(1)
 			}
 		}
 	},
@@ -86,5 +88,6 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.AddCommand(CompletionCmd)
+	rootCmd.AddCommand(completionCmd)
+	rootCmd.AddCommand(serverCmd)
 }
