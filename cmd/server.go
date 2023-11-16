@@ -11,7 +11,6 @@ import (
 var serverCmd = &cobra.Command{
 	Use:                   "server [<address>]",
 	Short:                 "Starts a gRPC server serving grpcmd.GrpcmdService with reflection",
-	DisableFlagsInUseLine: true,
 	Args:                  cobra.RangeArgs(0, 1),
 	Run: func(cmd *cobra.Command, args []string) {
 		var address string

@@ -13,7 +13,6 @@ import (
 var rootCmd = &cobra.Command{
 	Use:                   "grpc <address> [<method> [<json>...]]",
 	Short:                 "A simple, easy-to-use, and developer-friendly CLI tool for gRPC.",
-	DisableFlagsInUseLine: true,
 	Args:                  cobra.MinimumNArgs(0),
 	Run: func(cmd *cobra.Command, args []string) {
 		defer grpcmd.Free()
@@ -80,6 +79,12 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+func SetBuildInfo(version string, date string) {
+	rootCmd.Version = version
+	rootCmd.SetVersionTemplate("grpc version " + version + " (" + date[0:10] + ")\n" +
+		"https://github.com/grpcmd/grpcmd/releases/v" + version + "\n")
+}
+
 func Execute() {
 	err := rootCmd.Execute()
 	if err != nil {
@@ -88,6 +93,7 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(completionCmd)
 	rootCmd.AddCommand(serverCmd)
 }

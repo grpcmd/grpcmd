@@ -9,7 +9,6 @@ import (
 var completionCmd = &cobra.Command{
 	Use:                   "completion (bash | zsh | fish | powershell)",
 	Short:                 "Outputs the completion script for the specified shell",
-	DisableFlagsInUseLine: true,
 	ValidArgs:             []string{"bash", "zsh", "fish", "powershell"},
 	Args:                  cobra.MatchAll(cobra.ExactArgs(1), cobra.OnlyValidArgs),
 	Run: func(cmd *cobra.Command, args []string) {
