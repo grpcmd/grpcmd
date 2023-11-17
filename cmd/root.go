@@ -69,7 +69,7 @@ var rootCmd = &cobra.Command{
 			if err != nil {
 				return emptySlice, directive
 			}
-			methods, err := grpcmd.Methods()
+			methods, err := grpcmd.NonambiguousMethods()
 			if err != nil {
 				return emptySlice, directive
 			}

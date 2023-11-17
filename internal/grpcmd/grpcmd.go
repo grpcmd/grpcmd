@@ -95,6 +95,78 @@ func Methods() ([]string, error) {
 	return _methods, nil
 }
 
+func NonambiguousMethods() ([]string, error) {
+	methods, err := Methods()
+	if err != nil {
+		return nil, err
+	}
+
+	nonambiguousMethods := make([]string, 0, len(methods))
+	ambiguousMethods := make(map[string]bool)
+
+	for _, fullyQualifiedName := range methods {
+		i := strings.LastIndex(fullyQualifiedName, ".")
+		var name string
+		if i == -1 {
+			name = fullyQualifiedName
+		} else {
+			name = fullyQualifiedName[i+1:]
+		}
+		nonambiguousMethods = append(nonambiguousMethods, name)
+		if _, ok := ambiguousMethods[name]; ok {
+			ambiguousMethods[name] = true
+		} else {
+			ambiguousMethods[name] = false
+		}
+	}
+
+	for i, fullyQualifiedName := range methods {
+		name := nonambiguousMethods[i]
+		if ambiguousMethods[name] {
+			nonambiguousMethods[i] = fullyQualifiedName
+		}
+	}
+
+	return nonambiguousMethods, nil
+}
+
+func findFullyQualifiedMethod(method string) (string, error) {
+	methods, err := Methods()
+	if err != nil {
+		return "", err
+	}
+	matches := make([]string, 0, 1)
+	exactMatches := make([]string, 0, 1)
+	for _, fullyQualifiedName := range methods {
+		if i := strings.Index(fullyQualifiedName, method); i > -1 {
+			matches = append(matches, fullyQualifiedName)
+		}
+		i := strings.LastIndex(fullyQualifiedName, ".")
+		name := fullyQualifiedName[i+1:]
+		if method == name {
+			exactMatches = append(exactMatches, fullyQualifiedName)
+		}
+	}
+	if len(matches) == 0 {
+		return "", errors.New("No matching method for: " + method)
+	} else if len(matches) == 1 {
+		return matches[0], nil
+	} else if len(exactMatches) == 1 {
+		return exactMatches[0], nil
+	} else {
+		var text strings.Builder
+		text.WriteString("Ambiguous method ")
+		text.WriteString(method)
+		text.WriteString(". Matching methods:\n")
+		for _, m := range matches {
+			text.WriteString("\t\t")
+			text.WriteString(m)
+			text.WriteRune('\n')
+		}
+		return "", errors.New(text.String())
+	}
+}
+
 func ServicesMethodsOutput() (string, error) {
 	_, err := Methods()
 	if err != nil {
@@ -104,8 +176,12 @@ func ServicesMethodsOutput() (string, error) {
 }
 
 func DescribeMethod(method string) (string, error) {
+	fullyQualifiedMethod, err := findFullyQualifiedMethod(method)
+	if err != nil {
+		return "", err
+	}
 	var output strings.Builder
-	dsc, err := _refSource.FindSymbol(method)
+	dsc, err := _refSource.FindSymbol(fullyQualifiedMethod)
 	if err != nil {
 		return "", err
 	}
@@ -153,7 +229,11 @@ func DescribeMethod(method string) (string, error) {
 	return output.String(), nil
 }
 
-func Call(address, data string) error {
+func Call(method, data string) error {
+	fullyQualifiedMethod, err := findFullyQualifiedMethod(method)
+	if err != nil {
+		return err
+	}
 	options := grpcurl.FormatOptions{
 		EmitJSONDefaultFields: true,
 		AllowUnknownFields:    false,
@@ -170,7 +250,7 @@ func Call(address, data string) error {
 			VerbosityLevel: 0,
 		},
 	}
-	err = grpcurl.InvokeRPC(_ctx, _refSource, _cc, address, nil, h, rp.Next)
+	err = grpcurl.InvokeRPC(_ctx, _refSource, _cc, fullyQualifiedMethod, nil, h, rp.Next)
 	if err != nil {
 		if errStatus, ok := status.FromError(err); ok {
 			h.Status = errStatus
