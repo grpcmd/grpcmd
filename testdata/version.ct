@@ -1,0 +1,11 @@
+$ grpc version
+grpc version 0.0.0 (0000-00-00)
+https://github.com/grpcmd/grpcmd/releases/v0.0.0
+
+$ grpc -v
+grpc version 0.0.0 (0000-00-00)
+https://github.com/grpcmd/grpcmd/releases/v0.0.0
+
+$ grpc --version
+grpc version 0.0.0 (0000-00-00)
+https://github.com/grpcmd/grpcmd/releases/v0.0.0

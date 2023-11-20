@@ -1,0 +1,154 @@
+$ grpc :50051
+grpc.reflection.v1.ServerReflection
+	ServerReflectionInfo
+
+grpc.reflection.v1alpha.ServerReflection
+	ServerReflectionInfo
+
+grpcmd.GrpcmdService
+	BidirectionalStreamingMethod
+	ClientStreamingMethod
+	ServerStreamingMethod
+	UnaryMethod
+
+$ grpc :50051 UnaryMethod
+rpc UnaryMethod ( .grpcmd.GrpcmdRequest ) returns ( .grpcmd.GrpcmdResponse );
+
+message GrpcmdRequest {
+  string name = 1;
+}
+
+message GrpcmdResponse {
+  string message = 1;
+}
+
+GrpcmdRequest Template:
+{
+  "name": ""
+}
+
+$ grpc :50051 ClientStreamingMethod
+rpc ClientStreamingMethod ( stream .grpcmd.GrpcmdRequest ) returns ( .grpcmd.GrpcmdResponse );
+
+message GrpcmdRequest {
+  string name = 1;
+}
+
+message GrpcmdResponse {
+  string message = 1;
+}
+
+GrpcmdRequest Template:
+{
+  "name": ""
+}
+
+$ grpc :50051 ServerStreamingMethod
+rpc ServerStreamingMethod ( .grpcmd.GrpcmdRequest ) returns ( stream .grpcmd.GrpcmdResponse );
+
+message GrpcmdRequest {
+  string name = 1;
+}
+
+message GrpcmdResponse {
+  string message = 1;
+}
+
+GrpcmdRequest Template:
+{
+  "name": ""
+}
+
+$ grpc :50051 BidirectionalStreamingMethod
+rpc BidirectionalStreamingMethod ( stream .grpcmd.GrpcmdRequest ) returns ( stream .grpcmd.GrpcmdResponse );
+
+message GrpcmdRequest {
+  string name = 1;
+}
+
+message GrpcmdResponse {
+  string message = 1;
+}
+
+GrpcmdRequest Template:
+{
+  "name": ""
+}
+
+$ grpc :50051 UnaryMethod {"name":"Bob"}
+content-type: application/grpc
+
+{
+  "message": "Hello, Bob!"
+}
+
+status-code: 0 (OK)
+
+$ grpc :50051 ClientStreamingMethod {"name":"Bob"}{"name":"Alice"}
+content-type: application/grpc
+
+{
+  "message": "Hello, Bob + Alice!"
+}
+
+status-code: 0 (OK)
+
+$ grpc :50051 ClientStreamingMethod {"name":"Bob"} {"name":"Alice"}
+content-type: application/grpc
+
+{
+  "message": "Hello, Bob + Alice!"
+}
+
+status-code: 0 (OK)
+
+$ grpc :50051 ServerStreamingMethod {"name":"Bob"}
+content-type: application/grpc
+
+{
+  "message": "Hello, "
+}
+
+{
+  "message": "B"
+}
+
+{
+  "message": "o"
+}
+
+{
+  "message": "b"
+}
+
+{
+  "message": "!"
+}
+
+status-code: 0 (OK)
+
+$ grpc :50051 BidirectionalStreamingMethod {"name":"Bob"}{"name":"Alice"}
+content-type: application/grpc
+
+{
+  "message": "Hello, Bob!"
+}
+
+{
+  "message": "Hello, Alice!"
+}
+
+status-code: 0 (OK)
+
+$ grpc :50051 BidirectionalStreamingMethod {"name":"Bob"} {"name":"Alice"}
+content-type: application/grpc
+
+{
+  "message": "Hello, Bob!"
+}
+
+{
+  "message": "Hello, Alice!"
+}
+
+status-code: 0 (OK)

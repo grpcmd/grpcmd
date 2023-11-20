@@ -1,0 +1,75 @@
+$ grpc
+A simple, easy-to-use, and developer-friendly CLI tool for gRPC.
+
+Usage:
+  grpc <address> [<method> [<json>...]] [flags]
+  grpc [command]
+
+Available Commands:
+  completion  Outputs the completion script for the specified shell
+  help        Help about any command
+  server      Starts a gRPC server serving grpcmd.GrpcmdService with reflection
+  version     Outputs the version
+
+Flags:
+  -h, --help      help for grpc
+  -v, --version   version for grpc
+
+Use "grpc [command] --help" for more information about a command.
+
+$ grpc help
+A simple, easy-to-use, and developer-friendly CLI tool for gRPC.
+
+Usage:
+  grpc <address> [<method> [<json>...]] [flags]
+  grpc [command]
+
+Available Commands:
+  completion  Outputs the completion script for the specified shell
+  help        Help about any command
+  server      Starts a gRPC server serving grpcmd.GrpcmdService with reflection
+  version     Outputs the version
+
+Flags:
+  -h, --help      help for grpc
+  -v, --version   version for grpc
+
+Use "grpc [command] --help" for more information about a command.
+
+$ grpc -h
+A simple, easy-to-use, and developer-friendly CLI tool for gRPC.
+
+Usage:
+  grpc <address> [<method> [<json>...]] [flags]
+  grpc [command]
+
+Available Commands:
+  completion  Outputs the completion script for the specified shell
+  help        Help about any command
+  server      Starts a gRPC server serving grpcmd.GrpcmdService with reflection
+  version     Outputs the version
+
+Flags:
+  -h, --help      help for grpc
+  -v, --version   version for grpc
+
+Use "grpc [command] --help" for more information about a command.
+
+$ grpc --help
+A simple, easy-to-use, and developer-friendly CLI tool for gRPC.
+
+Usage:
+  grpc <address> [<method> [<json>...]] [flags]
+  grpc [command]
+
+Available Commands:
+  completion  Outputs the completion script for the specified shell
+  help        Help about any command
+  server      Starts a gRPC server serving grpcmd.GrpcmdService with reflection
+  version     Outputs the version
+
+Flags:
+  -h, --help      help for grpc
+  -v, --version   version for grpc
+
+Use "grpc [command] --help" for more information about a command.
