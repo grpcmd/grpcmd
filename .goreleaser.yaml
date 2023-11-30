@@ -25,6 +25,7 @@ archives:
 brews:
   -
     name: grpcmd
+    description: "A simple, easy-to-use, and developer-friendly CLI tool for gRPC."
     homepage: "https://github.com/grpcmd/grpcmd"
     repository:
       owner: grpcmd
@@ -32,3 +33,7 @@ brews:
     commit_author:
       name: goreleaserbot
       email: bot@goreleaser.com
+    extra_install: |
+      (bash_completion/"grpc").write `#{bin}/grpc completion bash`
+      (fish_completion/"grpc.fish").write `#{bin}/grpc completion fish`
+      (zsh_completion/"_grpc").write `#{bin}/grpc completion zsh`
