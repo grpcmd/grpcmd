@@ -23,7 +23,7 @@ grpcmd is a simple, easy-to-use, and developer-friendly CLI tool for gRPC.
 
 ### Homebrew
     brew install grpcmd/tap/grpcmd
-The above command will install `grpcmd` package from the tap [`grpcmd/tap`](https://github.com/grpcmd/homebrew-tap).
+The above command will install the `grpcmd` package from the tap [`grpcmd/tap`](https://github.com/grpcmd/homebrew-tap).
 
 ### Binary
 You can also download the binary files for macOS, Linux, and Windows from the [Releases](https://github.com/grpcmd/grpcmd/releases) page.
@@ -193,3 +193,27 @@ You may receive a firewall popup when running `grpc server :50051`. For example,
  - `grpc server 127.0.0.1:50051`
 
 When connecting to the server, you can still start with `grpc :50051` if you prefer.
+
+### Setup Shell Completion
+
+#### Homebrew
+If you installed the `grpcmd` package using Homebrew, the shell completion scripts should be installed to their respective directories. If you haven't setup brew completions, follow this [guide](https://docs.brew.sh/Shell-Completion). The guide includes directions for bash, zsh, and fish.
+
+#### Manual
+If you want to manually enable shell completion, run the following commands based on your shell. Note: Running the following commands will only affect the current session.
+
+##### Bash
+
+    source <(grpc completion bash)
+
+##### Zsh
+
+    source <(grpc completion zsh)
+
+##### fish
+
+    grpc completion fish | source
+
+##### PowerShell
+
+    bash completion powershell | Out-String | Invoke-Expression
