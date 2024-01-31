@@ -2,6 +2,9 @@
 
 grpcmd is a simple, easy-to-use, and developer-friendly CLI tool for gRPC.
 
+## Demo
+![Demo](./demo.svg)
+
 ## Feature Overview
  - View Available Services and Methods (using Reflection)
     - `grpc :50051`
