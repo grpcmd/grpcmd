@@ -172,7 +172,7 @@ func ServicesMethodsOutput() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return _servicesMethodsOutput.String(), nil
+	return strings.TrimRight(_servicesMethodsOutput.String(), "\n"), nil
 }
 
 func DescribeMethod(method string) (string, error) {
