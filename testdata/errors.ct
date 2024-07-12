@@ -1,0 +1,17 @@
+$ grpc :50052 --> FAIL
+Error while connecting to :50052:
+	dial tcp :50052: connect: connection refused
+
+$ grpc :50051 UnknownMethod --> FAIL
+Error while describing method UnknownMethod:
+	No matching method for: UnknownMethod
+
+$ grpc :50051 ServerReflection --> FAIL
+Error while describing method ServerReflection:
+	Ambiguous method ServerReflection. Matching methods:
+		grpc.reflection.v1.ServerReflection.ServerReflectionInfo
+		grpc.reflection.v1alpha.ServerReflection.ServerReflectionInfo
+
+$ grpc :50051 UnaryMethod bad_request_json --> FAIL
+Error while calling method UnaryMethod:
+	error getting request data: invalid character 'b' looking for beginning of value
