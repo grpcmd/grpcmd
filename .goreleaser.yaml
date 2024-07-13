@@ -37,3 +37,10 @@ brews:
       (bash_completion/"grpc").write `#{bin}/grpc completion bash`
       (fish_completion/"grpc.fish").write `#{bin}/grpc completion fish`
       (zsh_completion/"_grpc").write `#{bin}/grpc completion zsh`
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"

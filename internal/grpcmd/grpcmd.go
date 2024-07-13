@@ -265,7 +265,7 @@ func Call(method, data string) error {
 		}
 		fmt.Fprintln(os.Stderr)
 		fmt.Fprintln(os.Stderr, formattedStatus)
-		os.Exit(64 + int(h.Status.Code()))
+		return GrpcStatusExitError{Code: 64 + int(h.Status.Code())}
 	}
 	return nil
 }
