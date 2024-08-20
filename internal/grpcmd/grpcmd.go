@@ -240,7 +240,7 @@ func DescribeMethod(method string) (string, error) {
 	return output.String(), nil
 }
 
-func Call(method, data string) error {
+func Call(method, data string, headers []string) error {
 	fullyQualifiedMethod, err := findFullyQualifiedMethod(method)
 	if err != nil {
 		return err
@@ -261,7 +261,7 @@ func Call(method, data string) error {
 			VerbosityLevel: 0,
 		},
 	}
-	err = grpcurl.InvokeRPC(_ctx, _dscSource, _cc, fullyQualifiedMethod, nil, h, rp.Next)
+	err = grpcurl.InvokeRPC(_ctx, _dscSource, _cc, fullyQualifiedMethod, headers, h, rp.Next)
 	if err != nil {
 		if errStatus, ok := status.FromError(err); ok {
 			h.Status = errStatus

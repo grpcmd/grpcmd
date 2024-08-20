@@ -9,6 +9,7 @@ import (
 
 	"github.com/grpcmd/grpcmd/proto/pb"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/reflection"
 )
 
@@ -16,11 +17,15 @@ type server struct {
 	pb.UnimplementedGrpcmdServiceServer
 }
 
-func (server) UnaryMethod(_ context.Context, req *pb.GrpcmdRequest) (*pb.GrpcmdResponse, error) {
+func (server) UnaryMethod(ctx context.Context, req *pb.GrpcmdRequest) (*pb.GrpcmdResponse, error) {
+	if md, ok := metadata.FromIncomingContext(ctx); ok {
+		grpc.SetHeader(ctx, md)
+	}
 	return &pb.GrpcmdResponse{Message: "Hello, " + req.Name + "!"}, nil
 }
 
 func (server) ClientStreamingMethod(stream pb.GrpcmdService_ClientStreamingMethodServer) error {
+	setOutgoingHeadersFromIncomingHeadersForStream(stream)
 	names := make([]string, 0, 5)
 	for {
 		req, err := stream.Recv()
@@ -37,6 +42,7 @@ func (server) ClientStreamingMethod(stream pb.GrpcmdService_ClientStreamingMetho
 }
 
 func (server) ServerStreamingMethod(req *pb.GrpcmdRequest, stream pb.GrpcmdService_ServerStreamingMethodServer) error {
+	setOutgoingHeadersFromIncomingHeadersForStream(stream)
 	stream.Send(&pb.GrpcmdResponse{Message: "Hello, "})
 	for _, v := range req.Name {
 		stream.Send(&pb.GrpcmdResponse{Message: string(v)})
@@ -46,6 +52,7 @@ func (server) ServerStreamingMethod(req *pb.GrpcmdRequest, stream pb.GrpcmdServi
 }
 
 func (server) BidirectionalStreamingMethod(stream pb.GrpcmdService_BidirectionalStreamingMethodServer) error {
+	setOutgoingHeadersFromIncomingHeadersForStream(stream)
 	for {
 		req, err := stream.Recv()
 		if err == io.EOF {
@@ -55,6 +62,15 @@ func (server) BidirectionalStreamingMethod(stream pb.GrpcmdService_Bidirectional
 			return err
 		}
 		stream.Send(&pb.GrpcmdResponse{Message: "Hello, " + req.Name + "!"})
+	}
+}
+
+func setOutgoingHeadersFromIncomingHeadersForStream(stream interface {
+	SetHeader(metadata.MD) error
+	Context() context.Context
+}) {
+	if md, ok := metadata.FromIncomingContext(stream.Context()); ok {
+		stream.SetHeader(md)
 	}
 }
 

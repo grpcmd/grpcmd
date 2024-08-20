@@ -52,21 +52,13 @@ var rootCmd = &cobra.Command{
 				return grpcmd.ExitError{Code: 1}
 			}
 			fmt.Println(output)
-		} else if len(args) == 3 {
-			err := grpcmd.Call(args[1], args[2])
+		} else if len(args) >= 3 {
+			headers, data, err := parseRequestFromArgs(args)
 			if err != nil {
-				if e := new(grpcmd.GrpcStatusExitError); errors.As(err, e) {
-					return grpcmd.ExitError{Code: e.Code}
-				}
-				fmt.Fprintf(os.Stderr, "Error while calling method %s:\n\t%s\n", args[1], err)
+				fmt.Fprintf(os.Stderr, "Error while parsing request from args:\n\t%s\n", err)
 				return grpcmd.ExitError{Code: 1}
 			}
-		} else if len(args) > 3 {
-			var data strings.Builder
-			for i := 2; i < len(args); i++ {
-				data.WriteString(args[i])
-			}
-			err := grpcmd.Call(args[1], data.String())
+			err = grpcmd.Call(args[1], data, headers)
 			if err != nil {
 				if e := new(grpcmd.GrpcStatusExitError); errors.As(err, e) {
 					return grpcmd.ExitError{Code: e.Code}
@@ -97,6 +89,29 @@ var rootCmd = &cobra.Command{
 		}
 		return emptySlice, directive
 	},
+}
+
+func parseRequestFromArgs(args []string) ([]string, string, error) {
+	var headers []string
+	var data strings.Builder
+	seenJsonStart := false
+
+	for i := 2; i < len(args); i++ {
+		arg := strings.TrimSpace(args[i])
+		if strings.HasPrefix(arg, "{") {
+			seenJsonStart = true
+		}
+		if seenJsonStart {
+			data.WriteString(arg)
+		} else {
+			if strings.IndexByte(arg, ':') == -1 {
+				return nil, "", fmt.Errorf("malformed header: missing colon: \"%v\"", arg)
+			}
+			headers = append(headers, arg)
+		}
+	}
+
+	return headers, data.String(), nil
 }
 
 func SetBuildInfo(version string, date string) {
