@@ -21,6 +21,13 @@ func TestCLI(t *testing.T) {
 		t.Fatal(err)
 	}
 	ts.Commands["grpc"] = cmdtest.Program("grpc")
+	repoAbsPath, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	ts.Setup = func(s string) error {
+		return os.CopyFS(s+"/proto", os.DirFS(repoAbsPath+"/proto"))
+	}
 	ts.Run(t, *update)
 }
 

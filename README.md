@@ -176,6 +176,16 @@ Output:
 
 ## Additional Documentation
 
+### Proto Files
+If you want to use `.proto` files instead of Reflection, you can pass one or more comma-separated file locations to the `--protos` (shorthand: `-p`) flag. For example:
+
+    grpc --protos a.proto --protos b.proto,c.proto :50051
+
+### Proto Import Paths
+If your `.proto` files contain import statements, you'll likely want to set the search paths for the imports to work properly. To do this, you can pass one or more comma-separated directory locations to the `--paths` (shorthand: `-P`) flag. For example:
+
+    grpc --protos a.proto --paths ../protos/ :50051
+
 ### Sending an Empty Request
 To send an empty request, simply pass an empty argument for the request data. For example:
 

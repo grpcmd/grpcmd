@@ -11,6 +11,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var flagProtoFiles []string
+var flagProtoPaths []string
+
 var rootCmd = &cobra.Command{
 	Use:           "grpc <address> [<method> [<json>...]]",
 	Short:         "A simple, easy-to-use, and developer-friendly CLI tool for gRPC.",
@@ -22,6 +25,13 @@ var rootCmd = &cobra.Command{
 		if len(args) == 0 {
 			cmd.Root().Help()
 			return nil
+		}
+		if len(flagProtoFiles) > 0 {
+			err := grpcmd.SetFileSource(flagProtoFiles, flagProtoPaths)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error while reading proto files:\n\t%s\n", err)
+				return grpcmd.ExitError{Code: 1}
+			}
 		}
 		err := grpcmd.Connect(args[0])
 		if err != nil {
@@ -109,4 +119,7 @@ func init() {
 	rootCmd.AddCommand(versionCmd)
 	rootCmd.AddCommand(completionCmd)
 	rootCmd.AddCommand(serverCmd)
+
+	rootCmd.Flags().StringSliceVarP(&flagProtoFiles, "protos", "p", nil, "comma-separated list of proto files.")
+	rootCmd.Flags().StringSliceVarP(&flagProtoPaths, "paths", "P", nil, "comma-separated list of proto import paths.")
 }

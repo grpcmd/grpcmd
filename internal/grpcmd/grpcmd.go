@@ -19,8 +19,7 @@ import (
 var (
 	_ctx       context.Context
 	_cc        *grpc.ClientConn
-	_refClient *grpcreflect.Client
-	_refSource grpcurl.DescriptorSource
+	_dscSource grpcurl.DescriptorSource
 
 	_services              []string
 	_methods               []string
@@ -39,6 +38,15 @@ func Free() {
 	}
 }
 
+func SetFileSource(protoFiles, protoPaths []string) error {
+	fileSource, err := grpcurl.DescriptorSourceFromProtoFiles(protoPaths, protoFiles...)
+	if err != nil {
+		return err
+	}
+	_dscSource = fileSource
+	return nil
+}
+
 func Connect(address string) error {
 	var cancel context.CancelFunc
 	_ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
@@ -51,9 +59,12 @@ func Connect(address string) error {
 	}
 	deferCall(func() { _cc.Close() })
 
-	_refClient = grpcreflect.NewClientAuto(_ctx, _cc)
-	deferCall(_refClient.Reset)
-	_refSource = grpcurl.DescriptorSourceFromServer(_ctx, _refClient)
+	if _dscSource == nil {
+		refClient := grpcreflect.NewClientAuto(_ctx, _cc)
+		deferCall(refClient.Reset)
+		refSource := grpcurl.DescriptorSourceFromServer(_ctx, refClient)
+		_dscSource = refSource
+	}
 	return nil
 }
 
@@ -61,7 +72,7 @@ func Services() ([]string, error) {
 	if _services != nil {
 		return _services, nil
 	}
-	services, err := grpcurl.ListServices(_refSource)
+	services, err := grpcurl.ListServices(_dscSource)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +89,7 @@ func Methods() ([]string, error) {
 		return nil, err
 	}
 	for _, s := range services {
-		methods, err := grpcurl.ListMethods(_refSource, s)
+		methods, err := grpcurl.ListMethods(_dscSource, s)
 		if err != nil {
 			return nil, err
 		}
@@ -181,11 +192,11 @@ func DescribeMethod(method string) (string, error) {
 		return "", err
 	}
 	var output strings.Builder
-	dsc, err := _refSource.FindSymbol(fullyQualifiedMethod)
+	dsc, err := _dscSource.FindSymbol(fullyQualifiedMethod)
 	if err != nil {
 		return "", err
 	}
-	txt, err := grpcurl.GetDescriptorText(dsc, _refSource)
+	txt, err := grpcurl.GetDescriptorText(dsc, _dscSource)
 	if err != nil {
 		return "", err
 	}
@@ -196,14 +207,14 @@ func DescribeMethod(method string) (string, error) {
 	// TODO: it is possible to convert this into an if statement and ok conversion check.
 	switch d := dsc.(type) {
 	case *desc.MethodDescriptor:
-		txt, err = grpcurl.GetDescriptorText(d.GetInputType(), _refSource)
+		txt, err = grpcurl.GetDescriptorText(d.GetInputType(), _dscSource)
 		if err != nil {
 			return "", err
 		}
 		output.WriteString(txt)
 		output.WriteRune('\n')
 		output.WriteRune('\n')
-		txt, err = grpcurl.GetDescriptorText(d.GetOutputType(), _refSource)
+		txt, err = grpcurl.GetDescriptorText(d.GetOutputType(), _dscSource)
 		if err != nil {
 			return "", err
 		}
@@ -213,7 +224,7 @@ func DescribeMethod(method string) (string, error) {
 
 		tmpl := grpcurl.MakeTemplate(d.GetInputType())
 		options := grpcurl.FormatOptions{EmitJSONDefaultFields: true}
-		_, formatter, err := grpcurl.RequestParserAndFormatter(grpcurl.FormatJSON, _refSource, nil, options)
+		_, formatter, err := grpcurl.RequestParserAndFormatter(grpcurl.FormatJSON, _dscSource, nil, options)
 		if err != nil {
 			return "", err
 		}
@@ -239,7 +250,7 @@ func Call(method, data string) error {
 		AllowUnknownFields:    false,
 		IncludeTextSeparator:  false,
 	}
-	rp, formatter, err := grpcurl.RequestParserAndFormatter(grpcurl.FormatJSON, _refSource, strings.NewReader(data), options)
+	rp, formatter, err := grpcurl.RequestParserAndFormatter(grpcurl.FormatJSON, _dscSource, strings.NewReader(data), options)
 	if err != nil {
 		return err
 	}
@@ -250,7 +261,7 @@ func Call(method, data string) error {
 			VerbosityLevel: 0,
 		},
 	}
-	err = grpcurl.InvokeRPC(_ctx, _refSource, _cc, fullyQualifiedMethod, nil, h, rp.Next)
+	err = grpcurl.InvokeRPC(_ctx, _dscSource, _cc, fullyQualifiedMethod, nil, h, rp.Next)
 	if err != nil {
 		if errStatus, ok := status.FromError(err); ok {
 			h.Status = errStatus
