@@ -1,6 +1,6 @@
 module github.com/grpcmd/grpcmd
 
-go 1.21.3
+go 1.23.0
 
 require (
 	github.com/fullstorydev/grpcurl v1.8.8
