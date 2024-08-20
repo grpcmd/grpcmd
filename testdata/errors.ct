@@ -12,6 +12,10 @@ Error while describing method ServerReflection:
 		grpc.reflection.v1.ServerReflection.ServerReflectionInfo
 		grpc.reflection.v1alpha.ServerReflection.ServerReflectionInfo
 
-$ grpc :50051 UnaryMethod bad_request_json --> FAIL
+$ grpc :50051 UnaryMethod bad_header --> FAIL
+Error while parsing request from args:
+	malformed header: missing colon: "bad_header"
+
+$ grpc :50051 UnaryMethod {bad_request_json} --> FAIL
 Error while calling method UnaryMethod:
-	error getting request data: invalid character 'b' looking for beginning of value
+	error getting request data: invalid character 'b' looking for beginning of object key string

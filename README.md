@@ -50,6 +50,8 @@ Output:
     Try running:
             grpc :50051 UnaryMethod '{"name": "Bob"}'
 
+This will start a gRPC server (with Reflection) implementing the [`GrpcmdService`](https://github.com/grpcmd/grpcmd/blob/main/proto/grpcmd_service.proto). The methods within this service will also attach the incoming headers as outgoing headers.
+
 #### Options
 
 ##### Address
@@ -176,10 +178,29 @@ Output:
 
 ## Additional Documentation
 
-### Sending an Empty Request
-To send an empty request, simply pass an empty argument for the request data. For example:
+### Proto Files
+If you want to use `.proto` files instead of Reflection, you can pass one or more comma-separated file locations to the `--protos` (shorthand: `-p`) flag. For example:
 
-    grpc :50051 UnaryMethod ''
+    grpc --protos a.proto --protos b.proto,c.proto :50051
+
+### Proto Import Paths
+If your `.proto` files contain import statements, you'll likely want to set the search paths for the imports to work properly. To do this, you can pass one or more comma-separated directory locations to the `--paths` (shorthand: `-P`) flag. For example:
+
+    grpc --protos a.proto --paths ../protos/ :50051
+
+### Sending an Empty Request
+To send an empty request, simply pass an empty JSON argument for the request data. For example:
+
+    grpc :50051 UnaryMethod {}
+
+### Sending Additional Request Headers (Metadata)
+To send a request with additional headers, simply pass one or more `key: value` arguments before the request data. For example:
+
+    grpc :50051 UnaryMethod 'custom-header: custom-value' {}
+
+or
+
+    grpc :50051 UnaryMethod header-1:value-1 header-2:value-2 {}
 
 ### Exit Codes
 On success, the exit code will be `0`. However, if there is a non-OK gRPC status code in the response, the exit code will be equal to `64 + the gRPC status code`. Other application errors will have exit codes less than `64`. For example, failure to connect to the provided address will result in an exit code of `1`.

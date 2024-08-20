@@ -1,0 +1,75 @@
+$ grpc :50051 UnaryMethod custom-header:custom-value {"name":"Bob"}
+content-type: application/grpc
+custom-header: custom-value
+
+{
+  "message": "Hello, Bob!"
+}
+
+status-code: 0 (OK)
+
+$ grpc :50051 UnaryMethod header-1:value-1 header-2:value-2 {"name":"Bob"}
+content-type: application/grpc
+header-1: value-1
+header-2: value-2
+
+{
+  "message": "Hello, Bob!"
+}
+
+status-code: 0 (OK)
+
+$ grpc :50051 UnaryMethod {"name":"Bob"} custom-header:custom-value --> FAIL
+Error while calling method UnaryMethod:
+	error getting request data: invalid character 'c' looking for beginning of value
+
+$ grpc :50051 ClientStreamingMethod custom-header:custom-value {"name":"Bob"} {"name":"Alice"}
+content-type: application/grpc
+custom-header: custom-value
+
+{
+  "message": "Hello, Bob + Alice!"
+}
+
+status-code: 0 (OK)
+
+$ grpc :50051 ServerStreamingMethod custom-header:custom-value {"name":"Bob"}
+content-type: application/grpc
+custom-header: custom-value
+
+{
+  "message": "Hello, "
+}
+
+{
+  "message": "B"
+}
+
+{
+  "message": "o"
+}
+
+{
+  "message": "b"
+}
+
+{
+  "message": "!"
+}
+
+status-code: 0 (OK)
+
+$ grpc :50051 BidirectionalStreamingMethod custom-header:custom-value {"name":"Bob"} {"name":"Alice"}
+content-type: application/grpc
+custom-header: custom-value
+
+{
+  "message": "Hello, Bob!"
+}
+
+{
+  "message": "Hello, Alice!"
+}
+
+status-code: 0 (OK)
+
