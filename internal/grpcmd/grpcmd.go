@@ -204,9 +204,7 @@ func DescribeMethod(method string) (string, error) {
 	output.WriteRune('\n')
 	output.WriteRune('\n')
 
-	// TODO: it is possible to convert this into an if statement and ok conversion check.
-	switch d := dsc.(type) {
-	case *desc.MethodDescriptor:
+	if d, ok := dsc.(*desc.MethodDescriptor); ok {
 		txt, err = grpcurl.GetDescriptorText(d.GetInputType(), _dscSource)
 		if err != nil {
 			return "", err
@@ -234,7 +232,7 @@ func DescribeMethod(method string) (string, error) {
 		}
 		output.WriteString(d.GetInputType().GetName() + " Template:\n")
 		output.WriteString(str)
-	default:
+	} else {
 		return "", errors.New("Descriptor for " + dsc.GetFullyQualifiedName() + " is not a MethodDescriptor.")
 	}
 	return output.String(), nil
@@ -254,7 +252,7 @@ func Call(method, data string, headers []string) error {
 	if err != nil {
 		return err
 	}
-	h := &GrpcXEventHandler{
+	h := &GrpcmdEventHandler{
 		DefaultEventHandler: grpcurl.DefaultEventHandler{
 			Out:            os.Stdout,
 			Formatter:      formatter,
