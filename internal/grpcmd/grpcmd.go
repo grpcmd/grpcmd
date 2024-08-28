@@ -39,12 +39,31 @@ func Free() {
 }
 
 func SetFileSource(protoFiles, protoPaths []string) error {
-	fileSource, err := grpcurl.DescriptorSourceFromProtoFiles(protoPaths, protoFiles...)
+	fileSource, err := grpcurl.DescriptorSourceFromProtoFiles(
+		// Deduplication is required because for some reason the following command parses duplicate flags.
+		// $ grpc __complete --protos ./proto/grpcmd_service.proto :50051 UnaryMethod
+		removeDuplicates(protoPaths),
+		removeDuplicates(protoFiles)...,
+	)
 	if err != nil {
 		return err
 	}
 	_dscSource = fileSource
 	return nil
+}
+
+func removeDuplicates[T comparable](slice []T) []T {
+	unique := make([]T, 0, len(slice))
+	seen := make(map[T]bool)
+
+	for _, value := range slice {
+		if !seen[value] {
+			seen[value] = true
+			unique = append(unique, value)
+		}
+	}
+
+	return unique
 }
 
 func Connect(address string) error {

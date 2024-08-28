@@ -1,0 +1,30 @@
+$ grpc __complete :50051
+:4
+Completion ended with directive: ShellCompDirectiveNoFileComp
+
+$ grpc __complete :50051 ''
+grpc.reflection.v1.ServerReflection.ServerReflectionInfo
+grpc.reflection.v1alpha.ServerReflection.ServerReflectionInfo
+BidirectionalStreamingMethod
+ClientStreamingMethod
+ServerStreamingMethod
+UnaryMethod
+:4
+Completion ended with directive: ShellCompDirectiveNoFileComp
+
+
+$ grpc __complete --protos ./proto/grpcmd_service.proto :50051 ''
+BidirectionalStreamingMethod
+ClientStreamingMethod
+ServerStreamingMethod
+UnaryMethod
+:4
+Completion ended with directive: ShellCompDirectiveNoFileComp
+
+$ grpc __complete :50051 '' {}
+:4
+Completion ended with directive: ShellCompDirectiveNoFileComp
+
+$ grpc __complete --protos ./proto/grpcmd_service.proto :50051 '' {}
+:4
+Completion ended with directive: ShellCompDirectiveNoFileComp

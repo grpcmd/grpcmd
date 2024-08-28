@@ -77,9 +77,16 @@ var rootCmd = &cobra.Command{
 			return emptySlice, directive
 		} else if len(args) == 1 {
 			defer grpcmd.Free()
-			err := grpcmd.Connect(args[0])
-			if err != nil {
-				return emptySlice, directive
+			if len(flagProtoFiles) > 0 {
+				err := grpcmd.SetFileSource(flagProtoFiles, flagProtoPaths)
+				if err != nil {
+					return emptySlice, directive
+				}
+			} else {
+				err := grpcmd.Connect(args[0])
+				if err != nil {
+					return emptySlice, directive
+				}
 			}
 			methods, err := grpcmd.NonambiguousMethods()
 			if err != nil {
