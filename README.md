@@ -4,9 +4,12 @@
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/grpcmd/grpcmd)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/grpcmd/grpcmd/test.yml)
 ![GitHub Release](https://img.shields.io/github/v/release/grpcmd/grpcmd)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads-pre/grpcmd/grpcmd/total)
 ![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads-pre/grpcmd/grpcmd/latest/total)
 
 grpcmd is a simple, easy-to-use, and developer-friendly CLI tool for gRPC.
+
+[*(If you're looking for a gRPC GUI desktop app, check out: **grpcmd-gui**)*](https://github.com/grpcmd/grpcmd-gui)
 
 ## Demo
 ![Demo](./demo.svg)
